@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "taskmaster"
+version = "0.1.0"
+description = "A robust job control daemon and supervisor inspired by supervisor"
+authors = [
+    { name = "Elias", email = "student@42.fr" }
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "PyYAML>=6.0.1",
+    "prompt_toolkit>=3.0.40",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+]
+
+[project.scripts]
+taskmaster = "taskmaster.main:main"
+taskmasterd = "taskmaster.bin.taskmasterd:main"
+taskmasterctl = "taskmaster.bin.taskmasterctl:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

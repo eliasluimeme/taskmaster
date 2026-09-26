@@ -1,0 +1,31 @@
+ref/
+ARCHITECTURE.md
+PLAN.md
+TASKS.md
+Taskmaster.md
+
+# Python & Virtualenv
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+ENV/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+logs/
+*.log
+*.stdout
+*.stderr
+
+# Sockets
+*.sock
+
