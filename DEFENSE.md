@@ -172,5 +172,13 @@ taskmasterd -c demo.yml
    taskmasterctl
    taskmasterctl> status
    taskmasterctl> reload
-   taskmasterctl> quit
+   taskmasterctl> quit   # Exits taskmasterctl shell (daemon remains running)
    ```
+
+3. **Shutting down the remote supervisor daemon:**
+   ```bash
+   taskmasterctl shutdown
+   # Or inside interactive shell:
+   taskmasterctl> shutdown
+   ```
+

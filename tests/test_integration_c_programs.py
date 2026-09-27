@@ -129,8 +129,11 @@ async def test_c_flooder_output_streams():
         handler = ServiceHandler(cfg)
         try:
             await handler.start(["c_flooder"])
-            await asyncio.sleep(1.0)
-            await handler.stop(["c_flooder"])
+            proc = handler.services["c_flooder"].processes[0]
+            for _ in range(30):
+                if proc.returncode is not None or proc.state == ProcessState.EXITED:
+                    break
+                await asyncio.sleep(0.1)
 
             assert os.path.exists(stdout_file)
             assert os.path.exists(stderr_file)
@@ -166,8 +169,11 @@ async def test_c_umask_enforcement():
         handler = ServiceHandler(cfg)
         try:
             await handler.start(["c_umask"])
-            await asyncio.sleep(0.5)
-            await handler.stop(["c_umask"])
+            proc = handler.services["c_umask"].processes[0]
+            for _ in range(30):
+                if proc.returncode is not None or proc.state == ProcessState.EXITED:
+                    break
+                await asyncio.sleep(0.1)
 
             assert os.path.exists(test_file)
             mode = os.stat(test_file).st_mode & 0o777
@@ -195,8 +201,11 @@ async def test_c_env_checker():
         handler = ServiceHandler(cfg)
         try:
             await handler.start(["c_env"])
-            await asyncio.sleep(0.5)
-            await handler.stop(["c_env"])
+            proc = handler.services["c_env"].processes[0]
+            for _ in range(30):
+                if proc.returncode is not None or proc.state == ProcessState.EXITED:
+                    break
+                await asyncio.sleep(0.1)
 
             assert os.path.exists(out_file)
             with open(out_file, "r", encoding="utf-8") as f:

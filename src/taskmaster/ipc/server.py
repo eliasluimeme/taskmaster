@@ -18,10 +18,12 @@ class IPCServer:
         self,
         handler: ServiceHandler,
         socket_path: str = "/tmp/taskmaster.sock",
+        stop_event: Optional[asyncio.Event] = None,
     ) -> None:
         self.handler = handler
         self.cmd_handler = CommandHandler(handler)
         self.socket_path = socket_path
+        self.stop_event = stop_event
         self.logger = TaskmasterLogger.get_logger("ipc_server")
         self._server: Optional[asyncio.Server] = None
         self._running: bool = False
@@ -82,6 +84,8 @@ class IPCServer:
 
             if should_exit:
                 self._running = False
+                if self.stop_event:
+                    self.stop_event.set()
                 break
 
         writer.close()

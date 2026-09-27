@@ -7,7 +7,7 @@ name = "taskmaster"
 version = "0.1.0"
 description = "A robust job control daemon and supervisor inspired by supervisor"
 authors = [
-    { name = "Elias", email = "student@42.fr" }
+    { name = "Elias" }
 ]
 readme = "README.md"
 requires-python = ">=3.11"

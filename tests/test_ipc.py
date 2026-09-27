@@ -65,3 +65,26 @@ async def test_ipc_client_when_server_not_running():
     should_exit, out = await client.send_command("status")
     assert should_exit is False
     assert "Error: Cannot connect" in out
+
+
+@pytest.mark.asyncio
+async def test_ipc_shutdown_command():
+    """Verify shutdown command sets stop_event and returns clean exit signal."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        socket_path = os.path.join(tmpdir, "taskmaster_shutdown.sock")
+        cfg = TaskmasterConfig(programs={})
+        handler = ServiceHandler(cfg)
+        stop_event = asyncio.Event()
+
+        server = IPCServer(handler, socket_path=socket_path, stop_event=stop_event)
+        await server.start()
+
+        client = IPCClient(socket_path=socket_path)
+        should_exit, out = await client.send_command("shutdown")
+
+        assert should_exit is True
+        assert "Shutting down Taskmaster" in out
+        assert stop_event.is_set()
+
+        await server.stop()
+

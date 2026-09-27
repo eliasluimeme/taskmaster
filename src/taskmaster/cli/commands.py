@@ -18,6 +18,7 @@ class CommandHandler:
         "restart": "restart <name ... | all> Restart specified services",
         "reload": "reload                  Reload configuration file without stopping supervisor",
         "tail": "tail [-n N] <name> [err] Display recent output logs of a service",
+        "shutdown": "shutdown                  Gracefully stop all child processes and shut down supervisor",
         "help": "help [command]            Show documentation for available commands",
         "quit": "quit                      Gracefully stop all child processes and exit",
         "exit": "exit                      Alias for quit",
@@ -49,7 +50,7 @@ class CommandHandler:
         cmd = parts[0].lower()
         args = parts[1:]
 
-        if cmd in ("quit", "exit"):
+        if cmd in ("quit", "exit", "shutdown"):
             await self.handler.shutdown()
             return True, "Shutting down Taskmaster. Goodbye!"
 

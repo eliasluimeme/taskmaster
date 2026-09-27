@@ -67,6 +67,8 @@ async def run_client(args: argparse.Namespace) -> int:
             line = line_bytes.decode("utf-8", errors="replace").strip()
             if not line:
                 continue
+            if line.lower() in ("quit", "exit"):
+                break
             should_exit, output = await client.send_command(line)
             if output:
                 print(output)
@@ -75,7 +77,7 @@ async def run_client(args: argparse.Namespace) -> int:
         return 0
 
     session: PromptSession = PromptSession(history=FileHistory(str(history_path)))
-    verbs = ["status", "start", "stop", "restart", "reload", "tail", "help", "quit", "exit", "all"]
+    verbs = ["status", "start", "stop", "restart", "reload", "tail", "shutdown", "help", "quit", "exit", "all"]
 
     while True:
         try:
@@ -87,10 +89,13 @@ async def run_client(args: argparse.Namespace) -> int:
             if not line:
                 continue
 
+            if line.lower() in ("quit", "exit"):
+                break
+
             should_exit, output = await client.send_command(line)
             if output:
                 print(output)
-            if should_exit or line in ("quit", "exit"):
+            if should_exit:
                 break
 
         except KeyboardInterrupt:

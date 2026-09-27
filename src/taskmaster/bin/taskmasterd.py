@@ -64,14 +64,15 @@ async def run_daemon(args: argparse.Namespace) -> int:
         print(f"Configuration error: {exc}", file=sys.stderr)
         return 1
 
-    # 3. Instantiate handler and IPC server
-    handler = ServiceHandler(config)
-    socket_path = args.socket or config.socket_path
-    ipc_server = IPCServer(handler, socket_path=socket_path)
-
-    # 4. Attach signals
+    # 3. Instantiate handler, stop event, and IPC server
     loop = asyncio.get_running_loop()
     stop_event = asyncio.Event()
+
+    handler = ServiceHandler(config)
+    socket_path = args.socket or config.socket_path
+    ipc_server = IPCServer(handler, socket_path=socket_path, stop_event=stop_event)
+
+    # 4. Attach signals
 
     def handle_sighup():
         logger.info("Daemon received SIGHUP: triggering reload.")
