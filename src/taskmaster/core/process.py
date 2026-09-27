@@ -65,15 +65,14 @@ class SubProcess:
             return round(time.time() - self.start_time, 1)
         return None
 
-    def _prepare_stream(self, path_str: Optional[str]):
-        """Open output log stream in append mode."""
+    def _prepare_stream(self, path_str: Optional[str]) -> Any:
+        """Open output log stream in append mode using raw OS file descriptor."""
         if not path_str or path_str.upper() in ("DEVNULL", "DISCARD"):
             return asyncio.subprocess.DEVNULL
         
         target = Path(path_str).expanduser().resolve()
         target.parent.mkdir(parents=True, exist_ok=True)
-        # Open in append mode
-        return open(target, "a", encoding="utf-8")
+        return os.open(str(target), os.O_CREAT | os.O_WRONLY | os.O_APPEND, 0o644)
 
     async def start(self) -> bool:
         """Start the child process according to configuration."""
@@ -312,13 +311,19 @@ class SubProcess:
         return await self.start()
 
     def _cleanup_files(self) -> None:
-        """Close opened log files."""
-        for file_obj in (self._stdout_file, self._stderr_file):
-            if file_obj and hasattr(file_obj, "close"):
-                try:
-                    file_obj.close()
-                except Exception:
-                    pass
+        """Close opened log files and file descriptors."""
+        for handle in (self._stdout_file, self._stderr_file):
+            if handle is not None:
+                if isinstance(handle, int) and handle > 2:
+                    try:
+                        os.close(handle)
+                    except OSError:
+                        pass
+                elif hasattr(handle, "close"):
+                    try:
+                        handle.close()
+                    except Exception:
+                        pass
         self._stdout_file = None
         self._stderr_file = None
 

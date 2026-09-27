@@ -29,3 +29,11 @@ logs/
 # Sockets
 *.sock
 
+# Test compiled binaries
+tests/programs/crasher
+tests/programs/sleeper
+tests/programs/sigignorer
+tests/programs/flooder
+tests/programs/umask_checker
+tests/programs/env_checker
+tests/programs/*.txt

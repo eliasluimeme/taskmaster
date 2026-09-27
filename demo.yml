@@ -1,0 +1,74 @@
+# ==============================================================================
+# 42 Taskmaster - Demonstration Configuration
+# ==============================================================================
+
+programs:
+  # 1. Standard Long-Running Worker (numprocs: 2, autostart, stopsignal: TERM)
+  worker:
+    cmd: "tests/programs/sleeper 100"
+    numprocs: 2
+    autostart: true
+    autorestart: unexpected
+    exitcodes:
+      - 0
+    starttime: 2
+    startretries: 3
+    stopsignal: TERM
+    stoptime: 5
+    stdout: "logs/worker.stdout"
+    stderr: "logs/worker.stderr"
+
+  # 2. Crasher Process (Tests startretries, backoff, and FATAL state)
+  crasher:
+    cmd: "tests/programs/crasher 1"
+    numprocs: 1
+    autostart: false
+    autorestart: never
+    exitcodes:
+      - 0
+    starttime: 2
+    startretries: 2
+    stopsignal: TERM
+    stoptime: 3
+    stdout: "logs/crasher.stdout"
+    stderr: "logs/crasher.stderr"
+
+  # 3. Process that Ignores SIGTERM (Tests stoptime timeout and fallback SIGKILL)
+  stubborn:
+    cmd: "tests/programs/sigignorer"
+    numprocs: 1
+    autostart: false
+    autorestart: never
+    exitcodes:
+      - 0
+    starttime: 1
+    stopsignal: TERM
+    stoptime: 3  # Wait 3s then SIGKILL
+    stdout: "logs/stubborn.stdout"
+    stderr: "logs/stubborn.stderr"
+
+  # 4. Flooder (Tests heavy output redirection to file)
+  flooder:
+    cmd: "tests/programs/flooder"
+    numprocs: 1
+    autostart: false
+    autorestart: unexpected
+    exitcodes:
+      - 0
+    starttime: 0
+    stdout: "logs/flooder.stdout"
+    stderr: "logs/flooder.stderr"
+
+  # 5. Environment & Umask Verification
+  environment_test:
+    cmd: "tests/programs/env_checker 42_DEFENSE_SECRET"
+    numprocs: 1
+    autostart: false
+    autorestart: never
+    exitcodes:
+      - 0
+    starttime: 0
+    stdout: "logs/env_test.stdout"
+    env:
+      42_DEFENSE_SECRET: "EXCELLENT_125_PERCENT"
+    umask: "022"
