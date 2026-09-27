@@ -333,13 +333,3 @@ tests/test_supervision.py::test_service_handler_operations PASSED        [100%]
 
 ---
 
-## Peer Defense Guide
-
-For 42 School peer evaluations, follow the step-by-step evaluation script detailed in [DEFENSE.md](DEFENSE.md), covering:
-1. Configuration loading and syntax validation.
-2. Starting, stopping, and restarting child processes.
-3. Process state machine verification (`STARTING`, `RUNNING`, `BACKOFF`, `FATAL`).
-4. Autorestart policies (`always`, `never`, `unexpected`).
-5. Signal handling and fallback to forceful `SIGKILL`.
-6. Zero-downtime hot reloading with PID preservation on `SIGHUP`.
-7. Client/Server daemon communication and remote control.
